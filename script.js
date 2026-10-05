@@ -1,6 +1,6 @@
 'use strict';
 
-const CARD_SYMBOLS = [
+const CARDS = [
   {
     id: 'sleep',
     src: 'assets/sleep.png',
@@ -64,6 +64,31 @@ function createElement(tagName, className, textContent = '') {
   return element;
 }
 
+function createButton(textContent, className = '') {
+  const button = createElement('button', `button ${className}`, textContent);
+
+  button.type = 'button';
+
+  return button;
+}
+
+function createHeader() {
+  const header = createElement('header', 'header');
+  const logo = createElement('div', 'logo', 'Memory Game');
+  const controls = createElement('div', 'header__controls');
+
+  const newGameButton = createButton('New Game', 'button--primary');
+  const leaderboardButton = createButton(
+    'Leader board ',
+    'button--secondary',
+  );
+
+  controls.append(newGameButton, leaderboardButton);
+  header.append(logo, controls);
+
+  return header;
+}
+
 function shuffle(array) {
   const shuffledArray = [...array];
 
@@ -115,8 +140,8 @@ function createCard(cardData, index) {
 }
 
 function createBoard() {
-  const board = createElement('main', 'board');
-  const deck = shuffle([...CARD_SYMBOLS, ...CARD_SYMBOLS]);
+  const board = createElement('section', 'board');
+  const deck = shuffle([...CARDS, ...CARDS]);
 
   board.setAttribute('aria-label', 'Игровое поле');
 
@@ -126,12 +151,15 @@ function createBoard() {
     board.append(card);
   });
 
-  document.body.append(board);
+  return board;
 }
 
 function openCard(card) {
   card.classList.add('card--opened');
-  card.setAttribute('aria-label', `Открытая карточка: ${card.dataset.cardId}`);
+  card.setAttribute(
+    'aria-label',
+    `Открытая карточка: ${card.dataset.cardId}`,
+  );
 }
 
 function closeCard(card) {
@@ -200,4 +228,11 @@ function handleCardClick(event) {
   checkCards();
 }
 
-createBoard();
+const app = createElement('div', 'app');
+const header = createHeader();
+const main = createElement('main', 'main');
+const board = createBoard();
+
+main.append(board);
+app.append(header, main);
+document.body.append(app);
